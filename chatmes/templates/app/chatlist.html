@@ -1,0 +1,58 @@
+{% extends 'default.html' %}
+
+{% block title %} 
+Chats 
+{% endblock title %} 
+
+{% block content %}
+  <div class="container">
+    <div class="menu">
+      <div class="profile">
+        <div class="avatar">
+          {% if profile.portrait %}
+            <img src="{{ profile.portrait.url }}"/>
+          {% endif %}
+        </div>  
+        <h2 class="login"><a href="{% url 'profile' %}">{{ profile.nickname|default_if_none:author.username }}</a></h2>
+      </div>
+      <a href="{% url 'logout' %}" class="button-style">Выйти</a>
+    </div>
+    <div class="chat-list">
+      {% if chats %}
+        {% for c in chats %}
+          <div id="chat-list_item-{{ c.id }}" class="chat-list_item" chat-id="{{ c.id }}" members="{{ c.members_list }}">
+            <h4>{{ c.title }}</h4>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <div class="chat-manage">
+      <button id="chat-create" class="big-button">Добавить</button>
+      <button id="chat-destroy" class="big-button">Удалить</button>
+    </div>
+    <div class="message-list"></div>
+    <div class="message-sender">
+      <form id="message-sender" action="" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="hidden" id="author-id" value="{{ author.id }}">
+        <input type="hidden" id="selected-chat-id" value="">
+        <button type="submit" id="message-sender-button" class="submit-button">Отправить</button>
+      </form>
+      <button id="leave-chat" class="submit-button">Покинуть чат</button>
+      <button id="recruit-chat" class="submit-button">Добавить пользователя</button>
+    </div>
+  </div>
+
+  <div id="manage-chat-dialog" class="dialog-pad hidden">
+    <div class="dialog-box">
+      <div>
+        <span>наименование</span>
+        <input id="chat-title" type="text" maxlength="30">
+      </div>
+      <div id="user-list"></div>
+      <button id="dialog-box__ok" class="btn">Ok</button>
+      <button id="dialog-box__cancel" class="btn">Отмена</button>
+    </div>
+  </div>
+{% endblock content %}
